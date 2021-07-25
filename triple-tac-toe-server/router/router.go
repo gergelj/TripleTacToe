@@ -19,6 +19,7 @@ func (r *Router) Initialize( /*dbConn *database.DBConn*/ ) {
 	r.Router.Use(middleware.CORSMiddleware)
 	r.Router.Use(middleware.JSONMiddleware)
 	//r.Router.Use(middleware.DBTransactionMiddleware(dbConn.DB))
+	r.Router.HandleFunc("/api/test", func(w http.ResponseWriter, r *http.Request) { w.Write([]byte("Success")); w.WriteHeader(http.StatusOK) }).Methods("GET", "OPTIONS")
 
 	//userRepo := postgres.NewPostgresUserRepository(dbConn)
 	//authUsecase := usecase.NewAuthUsecase(userRepo)
