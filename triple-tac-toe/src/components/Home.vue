@@ -83,6 +83,11 @@ export default {
   },
   mounted () {
     this.name = localStorage.getItem('name')
+    setInterval(() => {
+      if (this.status === 'WAIT' || this.status === 'PLAY') {
+        sendMsg(JSON.stringify({ type: 'KEEP_ALIVE' }))
+      }
+    }, this.keepAlive * 1000)
   },
   methods: {
     connect () {
