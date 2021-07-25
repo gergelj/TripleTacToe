@@ -18,37 +18,37 @@
       </v-card>
     </v-dialog>
 
+    <v-card flat max-width="850" class="mx-auto">
+      <v-container fluid>
+        <v-row class="justify-center">
+          <logo></logo>
+        </v-row>
+      </v-container>
+    </v-card>
+
     <v-container>
       <v-card flat max-width="850" class="mx-auto">
-        <v-card-title>
-          <v-icon v-if="currentPlayer === player" x-large color="green">mdi-chevron-right</v-icon>
-          <badge :number="player"></badge>
-          <div class="ml-3">{{name}}</div>
-          <v-spacer></v-spacer>
-          <div class="d-flex">
-            <v-row v-if="status === 'WAIT'">Waiting for opponent</v-row>
-            <v-row v-if="status === 'PLAY'">{{player === currentPlayer ? 'My turn' : 'Opponent\'s turn'}}</v-row>
-            <v-row><v-btn @click="leave">Leave</v-btn></v-row>
-          </div>
-          <v-spacer></v-spacer>
-          <div class="mr-3">{{opponentName}}</div>
-          <badge :number="opponent"></badge>
-          <v-icon v-if="currentPlayer === opponent" x-large color="green">mdi-chevron-left</v-icon>
+        <v-card-title class="d-flex justify-center">
+          <div class="monotext" v-if="status === 'WAIT'">Waiting for opponent</div>
+          <div class="monotext" v-if="status === 'PLAY'">{{player === currentPlayer ? 'My turn' : 'Opponent\'s turn'}}</div>
         </v-card-title>
-        <v-card-text v-if="showGameBoard">
-          <v-container fluid>
-            <v-row v-for="i in [0,1,2]" :key="i">
-              <v-col v-for="j in [0,1,2]" :key="j" cols="4">
-                <v-card :class="bigGrid[i][j].allowed ? 'greentile' : ''" outlined>
+      </v-card>
+      <v-card flat max-width="850" class="mx-auto pa-0">
+        <toolbar v-if="status === 'PLAY'" @leave="leave" :name="name" :player="player" :currentPlayer="currentPlayer" :opponentName="opponentName"></toolbar>
+        <v-card-text v-if="showGameBoard" class="pa-0 ma-0">
+          <v-container class="ma-0">
+            <v-row class="justify-center flex-nowrap" v-for="i in [0,1,2]" :key="i">
+              <!--<v-col class="pa-1" v-for="j in [0,1,2]" :key="j" cols="4">-->
+                <v-card class="ma-1" v-for="j in [0,1,2]" :key="j" :style="(bigGrid[i][j].allowed ? 'background-color: rgb(234, 255, 234) !important;' : '')" outlined>
                   <v-container fluid>
-                    <v-row justify="center" v-for="k in [0,1,2]" :key="k">
-                      <v-col v-for="l in [0,1,2]" :key="l" cols="4">
-                        <badge @click="clicked" :number="grid[i][j][k][l]" :disabled="!bigGrid[i][j].allowed" :player="player" :currentPlayer="currentPlayer" :position="[i, j, k, l]"></badge>
-                      </v-col>
+                    <v-row class="justify-space-around flex-nowrap" v-for="k in [0,1,2]" :key="k">
+                      <!--<v-col class="pa-1" v-for="l in [0,1,2]" :key="l">-->
+                        <badge class="ma-1" v-for="l in [0,1,2]" :key="l" @click="clicked" :number="grid[i][j][k][l]" :disabled="!bigGrid[i][j].allowed" :player="player" :currentPlayer="currentPlayer" :position="[i, j, k, l]"></badge>
+                      <!--</v-col>-->
                     </v-row>
                   </v-container>
                 </v-card>
-              </v-col>
+              <!--</v-col>-->
             </v-row>
           </v-container>
         </v-card-text>
@@ -60,8 +60,10 @@
 <script>
 import { connect, sendMsg, closeConnection } from '@/websocket/websocket.js'
 import Badge from './Badge.vue'
+import Toolbar from './Toolbar.vue'
+import Logo from './Logo.vue'
 export default {
-  components: { Badge },
+  components: { Badge, Toolbar, Logo },
   name: 'Home',
   data () {
     return {
@@ -72,7 +74,8 @@ export default {
       player: -1, // change to -1
       currentPlayer: -1, // change to -1
       grid: {},
-      bigGrid: {}
+      bigGrid: {},
+      keepAlive: 20 // seconds
     }
   },
   created () {
@@ -85,9 +88,6 @@ export default {
     connect () {
       localStorage.setItem('name', this.name)
       connect(this.name, this)
-    },
-    sendMessage () {
-      sendMsg(JSON.stringify(this.message))
     },
     close () {
       closeConnection()
@@ -311,8 +311,9 @@ export default {
 }
 </script>
 
-<style scoped>
-  .greentile {
-    background-color: rgb(234, 255, 234) !important;
+<style>
+  .monotext {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
   }
 </style>
