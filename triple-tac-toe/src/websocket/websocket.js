@@ -1,6 +1,6 @@
 var socket = null
 const connect = (username, vm) => {
-  socket = new WebSocket('ws://' + process.env.VUE_APP_API_BASE_URL + 'ws?username=' + username)
+  socket = new WebSocket((process.env.NODE_ENV === 'production' ? 'wss://' : 'ws://') + process.env.VUE_APP_API_BASE_URL + 'ws?username=' + username)
   console.log('Attempting Connection...')
 
   socket.onopen = () => {
