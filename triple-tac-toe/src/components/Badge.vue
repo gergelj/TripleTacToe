@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-btn v-bind="size" @click="buttonClick" btn fab tile elevation="0" :outlined="disableClick" :dark="!disabled" :color="getColor">
+    <v-btn :width="size" :height="size" @click="buttonClick" btn fab tile elevation="0" :outlined="disableClick" :dark="!disabled" :color="getColor">
       <v-icon>{{getIcon}}</v-icon>
     </v-btn>
   </div>
@@ -60,10 +60,8 @@ export default {
       return this.disabled || !this.myTurn
     },
     size () {
-      const breakpoint = this.$vuetify.breakpoint.name
-      const order = { xs: 'x-small', sm: 'x-small', md: 'small', large: 'large', xl: 'large' }
-      // const size = ['xs': 'x-small', 'sm': 'small', 'lg': 'large', 'xl': 'x-large']
-      return order[breakpoint] ? { [order[breakpoint]]: true } : {}
+      const sizes = { xs: 28, sm: 50, md: 50, lg: 50, xl: 50 }
+      return sizes[this.$vuetify.breakpoint.name]
     }
   }
 }
