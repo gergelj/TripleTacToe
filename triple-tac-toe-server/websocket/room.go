@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"gregvader/triple-tac-toe/websocket/messageType"
 	"math/rand"
 	"sync"
 )
@@ -96,6 +97,16 @@ func (r *Room) Remove(client *Client) {
 }
 
 func (r *Room) SendMessage(clientMessage ClientMessage) {
+	var message Message
+	jsonErr := json.Unmarshal([]byte(clientMessage.WebsocketMessage.Body), &message)
+
+	if jsonErr == nil {
+		if message.Type == messageType.KeepAlive {
+			clientMessage.Sender.Conn.WriteJSON(Message{Type: messageType.Ok})
+			return
+		}
+	}
+
 	opponent, present := r.opponent.Load(clientMessage.Sender.User.Username)
 	if present {
 		opponentClient := opponent.(*Client)

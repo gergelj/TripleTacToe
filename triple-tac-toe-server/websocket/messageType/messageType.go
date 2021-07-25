@@ -7,6 +7,8 @@ const (
 	UsernameTaken MessageType = "USERNAME_TAKEN"
 	StartGame     MessageType = "START_GAME"
 	Left          MessageType = "LEFT"
+	KeepAlive     MessageType = "KEEP_ALIVE"
+	Ok            MessageType = "OK"
 )
 
 func (messageType MessageType) String() string {
